@@ -17,10 +17,10 @@ func main() {
 		// result      = make(map[string]string)
 
 	)
-	fmt.Println("Input your json text (not support nested and type @ to finish):")
+	fmt.Println("Input your json text (not support nested and type ^ to finish):")
 	reader := bufio.NewReader(os.Stdin)
-	input, _ := reader.ReadString('@') //end of input
-	input = strings.Replace(input, "@", "", len(input)-1)
+	input, _ := reader.ReadString('^') //end of input
+	input = strings.Replace(input, "^", "", len(input)-1)
 	err := json.Unmarshal([]byte(input), &data)
 	if err != nil {
 		fmt.Println("can not unmarshal data with error ", err)
@@ -62,6 +62,9 @@ func definition(data map[string]interface{}) (string, string) {
 	definitions = start
 	swagger = startSwg
 	for key, value := range data {
+		if value == nil {
+			continue
+		}
 		//swagger
 		var item = ""
 		switch reflect.TypeOf(value).Kind() {
