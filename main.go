@@ -26,10 +26,15 @@ func main() {
 		fmt.Println("can not unmarshal data with error ", err)
 		return
 	}
+
+	swagger, definitions := definition(data)
+	fmt.Println()
+	fmt.Println("-------------SWAGGER---------------")
+	fmt.Println()
+	fmt.Println(swagger)
 	fmt.Println()
 	fmt.Println("-------------DEFINITION---------------")
 	fmt.Println()
-	definitions := definition(data)
 	fmt.Println(definitions)
 }
 
@@ -40,20 +45,47 @@ func formatName(key string) string {
 	return key
 }
 
-func definition(data map[string]interface{}) string {
+func definition(data map[string]interface{}) (string, string) {
 	var (
 		definitions = ""
 		template    = "%s%s"
 		tabJSON     = "`json:\"%s\"`"
 		start       = "type Object struct{\n"
-		line        = "%s\t%s\t%s\n"
+		line        = "\t%s\t%s\t%s\n"
 		end         = "}\n"
+
+		swagger  = ""
+		startSwg = "Object:\n\ttype: object\n\tproperties:\n"
+		lineSwg  = "\t\t%s:\n\t\t\ttype: %s\n"
+		endSwg   = "\n"
 	)
 	definitions = start
+	swagger = startSwg
 	for key, value := range data {
+		//swagger
+		var item = ""
+		switch reflect.TypeOf(value).Kind() {
+		case reflect.Float64:
+			valueInt := cast.ToInt64(value.(float64) * 1e6)
+			if valueInt%1e6 == 0 {
+				item = fmt.Sprintf(lineSwg, key, "integer")
+			} else {
+				item = fmt.Sprintf(lineSwg, key, "number")
+			}
+		case reflect.Slice:
+			item = fmt.Sprintf(lineSwg, key, "array\n\t\t\titems: \n\t\t\t\ttype: object")
+		case reflect.Map:
+			item = fmt.Sprintf(lineSwg, key, "object")
+		case reflect.Bool:
+			item = fmt.Sprintf(lineSwg, key, "boolean")
+		default:
+			item = fmt.Sprintf(lineSwg, key, reflect.TypeOf(value))
+		}
+		swagger = fmt.Sprintf(template, swagger, item)
+
 		tab := fmt.Sprintf(tabJSON, key)
 		key = formatName(key)
-		var item = ""
+		item = ""
 		switch reflect.TypeOf(value).Kind() {
 		case reflect.Float64:
 			valueInt := cast.ToInt64(value.(float64) * 1e6)
@@ -66,7 +98,9 @@ func definition(data map[string]interface{}) string {
 			item = fmt.Sprintf(line, key, reflect.TypeOf(value), tab)
 		}
 		definitions = fmt.Sprintf(template, definitions, item)
+
 	}
+	swagger = fmt.Sprintf(template, swagger, endSwg)
 	definitions = fmt.Sprintf(template, definitions, end)
-	return definitions
+	return swagger, definitions
 }

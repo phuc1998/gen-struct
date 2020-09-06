@@ -29,7 +29,41 @@
 
 ```
 
-- Kết quả sau khi chạy tool sẽ cho ta một struct như sau
+- Kết quả sau khi chạy tool sẽ cho ta một struct như sau (swagger yml và define struct trong go)
+
+```yml
+
+    Object:
+            type: object
+            properties:
+                    realTime:
+                            type: string
+                    time:
+                            type: integer
+                    transsPointId:
+                            type: string
+                    unfixed_point:
+                            type: integer
+                    id:
+                            type: integer
+                    idStr:
+                            type: string
+                    isTransferPoint:
+                            type: boolean
+                    name:
+                            type: string
+                    surcharge_type:
+                            type: integer
+                    address:
+                            type: string
+                    min_customer:
+                            type: integer
+                    pointId:
+                            type: integer
+                    surcharge:
+                            type: integer
+
+```
 
 ```go
     type Object struct{
@@ -105,6 +139,41 @@
 ```
 
 - Kết quả sau khi chạy tool sẽ cho ta một struct như sau
+
+```yml
+    Object:
+            type: object
+            properties:
+                    dropoffPoint:
+                            type: object
+                    haveEating:
+                            type: integer
+                    customerEmail:
+                            type: string
+                    customerPhone:
+                            type: string
+                    routeId:
+                            type: string
+                    searchFromId:
+                            type: integer
+                    supplier:
+                            type: string
+                    companyId:
+                            type: string
+                    customerName:
+                            type: string
+                    pickupPoint:
+                            type: object
+                    customerIdentity:
+                            type: string
+                    searchToId:
+                            type: integer
+                    seats:
+                            type: string
+                    tripCode:
+                            type: string
+
+```
 
 ```go
     type Object struct{
